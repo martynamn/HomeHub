@@ -17,3 +17,11 @@ def get_last_properties(number: int, user_id: str, ):
 
     last_properties = properties_list[:number]
     return JsonResponse(last_properties, safe=False)
+
+def get_properties_by_user(user_id: str):
+    properties = Property.objects.filter(userId=user_id)
+    if not properties:
+        return JsonResponse({'error': 'No properties found for this user'}, status=404)
+
+    properties_list = PropertySerializer(properties, many=True).data
+    return JsonResponse(properties_list, safe=False)
