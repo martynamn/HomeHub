@@ -27,3 +27,7 @@ def get_last_properties(request, number: int):
     if not user_id:
         return JsonResponse({'error': 'userId is required'}, status=401)
     return property.get_last_properties(number, user_id)
+
+@require_GET
+def get_properties_by_user(request, user_id: str):
+    return property.get_properties_by_user(user_id)
