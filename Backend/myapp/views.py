@@ -90,6 +90,9 @@ def update_property(request, property_id):
         return JsonResponse(response, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+@require_GET
+def get_properties_by_user(request, user_id: str):
+    return property.get_properties_by_user(user_id)
 
 @require_GET
 def get_filter_parameter(request):
