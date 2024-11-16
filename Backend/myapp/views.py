@@ -37,3 +37,8 @@ def get_filter_parameter(request):
 @require_GET
 def get_properties(request):
     return property.get_properties(request)
+
+
+@require_GET
+def get_properties_by_user(request, user_id: str):
+    return property.get_properties_by_user(user_id)

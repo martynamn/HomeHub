@@ -10,5 +10,6 @@ urlpatterns = [
     path('api/property/latest/<int:number>', get_last_properties),
     path('api/filter', get_filter_parameter),
     path('api/property', get_properties),
+    path('api/property/user/<str:user_id>', get_properties_by_user),
 
 ]

@@ -70,3 +70,12 @@ def get_paginated_properties(properties, request):
         properties_page = paginator.page(paginator.num_pages)
 
     return properties_page
+
+
+def get_properties_by_user(user_id: str):
+    properties = Property.objects.filter(userId=user_id)
+    if not properties:
+        return JsonResponse({'error': 'No properties found for this user'}, status=404)
+
+    properties_list = PropertySerializer(properties, many=True).data
+    return JsonResponse(properties_list, safe=False)
