@@ -3,7 +3,7 @@ from djongo import models
 
 class Image(models.Model):
     _id = models.ObjectIdField()
-    imageData = models.CharField(max_length=255)
+    imageData = models.CharField(max_length=65535)
     filename = models.CharField(max_length=255)
 
     class Meta:
