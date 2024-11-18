@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
 from rest_framework.exceptions import ValidationError
 import json
 from myapp.services import dashboard
@@ -59,5 +60,43 @@ def create_property_view(request):
     if 'error' in response:
         return JsonResponse(response, status=400)
     return JsonResponse(response, status=201)
+
+
+@require_http_methods(['DELETE'])
+@csrf_exempt
+def delete_property_by_id(request, property_id):
+    response = property.delete_property_by_id(property_id)
+    if 'error' in response:
+        return JsonResponse(response, status=404)
+    return JsonResponse(response, status=200)
+
+@require_http_methods(['PUT'])
+@csrf_exempt
+def sold_property_by_id(request, property_id):
+    response = property.sold_property_by_id(property_id)
+    if 'error' in response:
+        return JsonResponse(response, status=404)
+    return JsonResponse(response, status=200)
+
+
+@require_http_methods(['PUT'])
+@csrf_exempt
+def update_property(request, property_id):
+    try:
+        metadata = request.POST.get('metadata')
+        files = request.FILES.getlist('files')
+
+        if not metadata:
+            return JsonResponse({'error': 'Metadata is required.'}, status=400)
+        if not files:
+            return JsonResponse({'error': 'Image files are required.'}, status=400)
+
+        response = property.update_property_by_id(property_id, metadata, files)
+        if 'error' in response:
+            return JsonResponse(response, status=404)
+        return JsonResponse(response, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
 
 
