@@ -27,6 +27,3 @@ urlpatterns = [
     path('api/property/sold/<str:property_id>', sold_property_by_id),
     path('api/property/update/<str:property_id>', update_property),
 ]
-
-
-
