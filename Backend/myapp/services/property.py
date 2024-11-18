@@ -95,9 +95,9 @@ def get_paginated_properties(properties, request):
     return properties_page
 
 
-def get_properties(request, user_id: str):
+def get_properties(request):
     filters = {
-        "userId": user_id,
+        "userId": request.GET.get('userId', None),
         "type": request.GET.get("type", None),
         "adType": request.GET.get("ad_type", None),
         "address__country": request.GET.get("country", None),
@@ -212,3 +212,51 @@ def create_property(metadata, files):
 
     except Exception as e:
         return {'error': str(e)}
+
+
+def delete_property_by_id(property_id):
+    try:
+        result = db.PROPERTY.delete_one({'_id': ObjectId(property_id)})
+
+        if result.deleted_count == 0:
+            return {'error': 'Property not found'}
+
+        return {'success': True, 'message': 'Property deleted successfully'}
+
+    except Exception as e:
+        return {'error': str(e)}
+
+
+def sold_property_by_id(property_id):
+    try:
+        result = db.PROPERTY.find_one_and_update(
+            {'_id': ObjectId(property_id)},
+            {'$set': {'adType': 'sold'}}
+        )
+
+        if result is None:
+            return {'error': 'property not found'}
+
+        return {'detail': 'property updated'}
+
+    except Exception as e:
+        return {'error': str(e)}
+
+
+def update_property_by_id(property_id, metadata, files):
+    try:
+        property_data = create_property(metadata, files)
+        result = db.PROPERTY.find_one_and_update(
+            {'_id': ObjectId(property_id)},
+            {'$set': property_data},
+            return_document=True
+        )
+
+        if result is None:
+            return {'error': 'property not found'}
+
+        return {'detail': 'property updated'}
+
+    except Exception as e:
+        return {'error': str(e)}
+
