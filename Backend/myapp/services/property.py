@@ -77,7 +77,6 @@ def get_property(property_id: str):
     property_serialized = PropertySerializer(property).data
     return JsonResponse(property_serialized, safe=False)
 
-
 def get_paginated_properties(properties, request):
     limit = request.GET.get('limit')
     index = request.GET.get('index')
