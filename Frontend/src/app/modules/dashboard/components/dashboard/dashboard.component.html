@@ -1,0 +1,13 @@
+<h2 class="title">{{ 'Dashboard' | translate }}</h2>
+<ng-container *ngIf="dashboardTiles$ | async as tiles">
+  <app-pie-chart-tile [tiles]="tiles"></app-pie-chart-tile>
+</ng-container>
+<ng-container class="chart" *ngIf="chartData$ | async as chartData">
+  <div class="chart">
+    <app-revenue-chart [chartData]="chartData"></app-revenue-chart>
+  </div>
+</ng-container>
+<div *ngIf="lastProperties$ | async as lastProperties">
+  <app-latest-properties [lastProperties]="lastProperties"></app-latest-properties>
+</div>
+

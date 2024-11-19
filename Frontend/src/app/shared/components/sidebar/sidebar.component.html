@@ -1,0 +1,44 @@
+<ul nz-menu class="sidebar" nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isSidebarCollapsed">
+  <ng-container *ngFor="let element of sidebarOptions">
+    <li nz-menu-item [nzMatchRouter]="true" [routerLink]="[element.path]">
+      <span nz-icon [nzType]="element.icon"></span>
+      <span>{{ element.name | translate }}</span>
+    </li>
+  </ng-container>
+</ul>
+
+<div class="user-menu-container">
+  <div class="user-menu">
+    <img
+      *ngIf="isSidebarCollapsed; else noDropdown"
+      [src]="IconPath.AVATAR_ICON"
+      nz-dropdown
+      nzTrigger="click"
+      [nzDropdownMenu]="menu"
+      [nzPlacement]="'topLeft'"
+    />
+    <ng-template #noDropdown>
+      <img [src]="IconPath.AVATAR_ICON" />
+    </ng-template>
+    <div *ngIf="tokenParsed && !isSidebarCollapsed">
+      <app-user-info [tokenParsed]="tokenParsed"></app-user-info>
+    </div>
+    <span
+      *ngIf="!isSidebarCollapsed"
+      nz-dropdown
+      nzTrigger="click"
+      [nzDropdownMenu]="menu"
+      [nzPlacement]="'topLeft'"
+      nz-icon
+      nzType="more"
+      nzTheme="outline"
+    ></span>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="logout()" class="logout">
+          <span nz-icon nzType="poweroff" nzTheme="outline"></span>{{ 'Logout' | translate }}
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </div>
+</div>

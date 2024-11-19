@@ -1,0 +1,39 @@
+
+.latest-property-container {
+  background: var(--app-white);
+  border-radius: 12px;
+  margin: 3rem 0 1rem 0;
+  padding: 0.7rem 1.2rem;
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    .latest-added {
+      margin: 0 0 0 1rem;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .show-more {
+      color: #000000;;
+      border: none;
+      font-size: 16px;
+      &:hover {
+        color: var(--sidebar-menu-lighter-background-color);
+      }
+    }
+  }
+  .property-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    justify-content: space-between;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 620px) {
+  .property-container {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+}

@@ -1,0 +1,23 @@
+<nz-card nzHoverable routerLink="/property/{{property._id}}">
+  <div class="tile-container">
+    <img class="image" [src]="sanitizedImageData">
+    <div class="tile-details">
+      <p class="price">${{property.price | pricePipe}}</p>
+      <p class="title">{{property.title}}</p>
+      <div class="location-container">
+        <img class="icon" [src]="IconPath.LOCATION"/>
+        <p class="location">{{property.address.city}}, {{property.address.country}}</p>
+      </div>
+      <div class="details">
+        <div class="details-content">
+          <img class="icon" [src]="IconPath.BED"/>
+          <p class="description">Rooms {{property.rooms}}</p>
+        </div>
+        <div class="details-content">
+          <img class="icon" [src]="IconPath.AREA"/>
+          <p class="description">Area {{property.address.area}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-card>

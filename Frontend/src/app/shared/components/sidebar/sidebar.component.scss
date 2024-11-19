@@ -1,0 +1,93 @@
+.sidebar{
+  width: 90% !important;
+  height: 56px;
+  border-radius: 12px;
+}
+
+.ant-menu-dark .ant-menu-item-selected .anticon + span {
+  color: var(--app-white);
+}
+
+ul {
+  li {
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-left: 10px;
+    }
+  }
+}
+
+ul.ant-menu li.ant-menu-item {
+  height: 56px;
+  border-radius: 8px;
+  font-weight: 600;
+
+  span {
+    height: 56px;
+    font-size: 14px;
+    line-height: 20px;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.3px;
+    color: var(--app-gray);
+
+    &.anticon {
+      font-size: 20px;
+    }
+  }
+}
+
+:host ::ng-deep .ant-menu-dark .ant-menu-item-group-title {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--app-icon-gray);
+  letter-spacing: 0em;
+  text-align: left;
+  height: 46px;
+  width: 248px;
+  padding-top: 20px;
+}
+
+:host::ng-deep .ant-badge-count {
+  border-radius: 6px;
+  background: var(--app-main-blue);
+  margin-left: 40px;
+  box-shadow: 0 0 0 0 #fff;
+}
+
+:host::ng-deep .ant-badge-not-a-wrapper:not(.ant-badge-status),
+.ant-badge-status-dot {
+  vertical-align: unset;
+}
+
+.user-menu-container {
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  padding-left: 24px;
+  padding-right: 16px;
+  cursor: pointer;
+
+  div {
+    margin-left: 10px;
+  }
+
+  span {
+    display: inline-block;
+  }
+}

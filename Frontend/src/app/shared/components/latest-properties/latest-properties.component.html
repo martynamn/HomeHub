@@ -1,0 +1,34 @@
+<div class="latest-property-container">
+  <div class="header">
+    <h3 class="latest-added">{{ 'Latest added' | translate }}</h3>
+    <button routerLink="/profile" class="show-more" nz-button nzType="link">
+      {{ 'show more' | translate }}
+      <span nz-icon nzType="right"></span>
+    </button>
+  </div>
+  <div class="property-container">
+    <ng-container *ngIf="lastProperties?.length else noData">
+      <ng-container *ngFor="let property of lastProperties">
+        <app-property-tile [property]="property" [last]="true"></app-property-tile>
+      </ng-container>
+    </ng-container>
+    <ng-template #noData>
+      <nz-empty
+        class="empty"
+        [nzNotFoundImage]="IconPath.REAL_ESTATE"
+        [nzNotFoundContent]="contentTpl"
+        [nzNotFoundFooter]="footerTpl"
+      >
+        <ng-template #contentTpl>
+          <span class="empty-content">{{ 'No Active Advertisements' | translate }}</span>
+        </ng-template>
+        <ng-template #footerTpl>
+          <button class="new-property" nz-button nzType="primary" routerLink="/property/new">
+            <i nz-icon nzType="plus"></i>
+            {{ 'Add Property' | translate }}
+          </button>
+        </ng-template>
+      </nz-empty>
+    </ng-template>
+  </div>
+</div>

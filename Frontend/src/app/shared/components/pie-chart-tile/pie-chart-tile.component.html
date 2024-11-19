@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="tile" *ngFor="let tile of tiles">
+    <div class="tile-text">
+      <span>{{PieChartTitle[tile.name]}}</span>
+      <span class="tile-value">{{tile.value}}</span>
+    </div>
+    <img [src]="PieChartIcons[tile.name]">
+  </div>
+</div>

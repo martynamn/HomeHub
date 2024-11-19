@@ -1,0 +1,40 @@
+<div class="app">
+  <nz-layout>
+    <nz-sider [(nzCollapsed)]="isSidebarCollapsed" nzCollapsible [nzTrigger]="null" [nzWidth]="sidebarWidth">
+      <div
+        [ngClass]="{
+          'sidebar-nav-container': !isSidebarCollapsed,
+          'sidebar-nav-container-collapsed': isSidebarCollapsed
+        }"
+      >
+        <div class="logo">
+          <div class="logo-img-and-text">
+            <img [ngClass]="{ 'logo-img': isSidebarCollapsed }" [src]="logoPath" />
+            <span *ngIf="!isSidebarCollapsed" [@fadeInAnimation] class="logo-text">{{ appName }}</span>
+          </div>
+          <button
+            [style.left]="isSidebarCollapsed ? '10px' : '25px'"
+            class="collapse-button"
+            nz-button
+            nzType="primary"
+            [nzSize]="'small'"
+            nzShape="circle"
+            (click)="isSidebarCollapsed = !isSidebarCollapsed"
+          >
+            <span nz-icon [nzType]="isSidebarCollapsed ? 'right' : 'left'"></span>
+          </button>
+        </div>
+        <app-sidebar
+        class="sidebar"
+          [sidebarOptions]="sidebarOptions"
+          [isSidebarCollapsed]="isSidebarCollapsed"
+        ></app-sidebar>
+      </div>
+    </nz-sider>
+    <nz-layout>
+      <nz-content>
+        <router-outlet></router-outlet>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</div>

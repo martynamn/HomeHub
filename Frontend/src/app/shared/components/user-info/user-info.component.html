@@ -1,0 +1,16 @@
+<div class="info">
+  <ng-container *ngIf="tokenParsed.given_name && tokenParsed.given_name.length > 25; else usernameWithoutSlice">
+    <span nz-tooltip nzTooltipTitle="{{ tokenParsed.given_name }}">
+      {{ (tokenParsed.given_name | slice : 0 : 25) + '...' }}</span>
+  </ng-container>
+  <ng-template #usernameWithoutSlice>
+    <span>{{ tokenParsed.given_name }}</span>
+  </ng-template>
+  <ng-container *ngIf="tokenParsed.email && tokenParsed.email.length > 25; else emailWithoutSlice">
+    <span nz-tooltip nzTooltipTitle="{{ tokenParsed.email }}" class="secondary-text">
+      {{ (tokenParsed.email | slice : 0 : 25) + '...' }}</span>
+  </ng-container>
+  <ng-template #emailWithoutSlice>
+    <span class="secondary-text">{{ tokenParsed.email }}</span>
+  </ng-template>
+</div>

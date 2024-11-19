@@ -1,0 +1,67 @@
+.sidebar{
+  display: flex;
+  justify-content: center;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.logo-img {
+  margin-left: 11px;
+}
+
+.logo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+  margin: 16px;
+  background: var(--app-light-background-gray);
+  font-size: 16px;
+}
+
+.logo-text {
+  color: var(--app-black);
+  margin-left: 10px;
+  white-space: pre;
+}
+
+nz-sider {
+  min-height: 100vh;
+  background-color: var(--sidebar-menu-background-color);
+}
+
+nz-content {
+  margin: var(--margin-y) var(--margin-x);
+}
+
+.collapse-button {
+  color: var(--app-gray);
+  left: 15px;
+  background-color: var(--sidebar-menu-background-color);
+  border-color: var(--sidebar-menu-lighter-background-color);
+}
+
+.veolia-logo {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.sidebar-nav-container {
+  position: fixed;
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  -webkit-transition: width 0.25s ease-in-out;
+  -moz-transition: width 0.25s ease-in-out;
+  -o-transition: width 0.25s ease-in-out;
+  transition: width 0.25s ease-in-out;
+}
+
+.sidebar-nav-container-collapsed {
+  position: fixed;
+  width: var(--sidebar-collapsed-width);
+  min-height: 100vh;
+}

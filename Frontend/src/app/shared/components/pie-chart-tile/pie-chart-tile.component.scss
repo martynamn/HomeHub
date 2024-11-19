@@ -1,0 +1,33 @@
+.container{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .tile{ 
+    display: flex;
+    background-color: var(--app-white);
+    justify-content: space-between;
+    border-radius: 15px;
+    padding: 24px 28px;
+    width: 24%;
+    min-width: 250px;
+    font-weight: 500;
+    color: var(--app-title);
+    .tile-text{
+      display: flex;
+      flex-direction: column;
+      font-size: 18px;
+      .tile-value{
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+      }
+    }
+    img{
+      height: 70px;
+      width: 70px;
+    }
+  }
+}
