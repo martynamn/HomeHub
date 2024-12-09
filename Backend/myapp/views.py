@@ -61,8 +61,9 @@ def get_property_by_id(request, property_id):
         return JsonResponse(response, status=404)
     return JsonResponse(response, safe=False, status=200)
 
-@csrf_exempt
+
 @require_POST
+@csrf_exempt
 def create_property_view(request):
     metadata = request.POST.get('metadata')
     files = request.FILES.getlist('files')
