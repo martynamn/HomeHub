@@ -16,6 +16,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class PropertySerializer(serializers.ModelSerializer):
+    image = ImageSerializer(allow_null=True)
     address = AddressSerializer()
     images = serializers.SerializerMethodField()
 

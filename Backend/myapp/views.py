@@ -43,3 +43,7 @@ def get_properties(request):
     if not user_id:
         return JsonResponse({'error': 'userId is required'}, status=401)
     return property.get_properties(request, user_id)
+
+@require_GET
+def get_properties_by_user(request, user_id: str):
+    return property.get_properties_by_user(user_id)
