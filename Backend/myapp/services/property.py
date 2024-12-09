@@ -132,7 +132,7 @@ def create_property(metadata, files):
                 'filename': file.name
             }
             image_id = db.IMAGE.insert_one(image_data).inserted_id
-            images.append(image_id)
+            images.append(str(image_id))
 
         property_data = {
             'description': data.get('description'),
@@ -142,11 +142,13 @@ def create_property(metadata, files):
             'userId': data.get('userId'),
             'price': data.get('price'),
             'rooms': data.get('rooms'),
+            'area': data.get('area'),
             'creationDate': datetime.now(),
             'address': address_id,
-            'image': images[0] if images else None
+            'images': images
         }
         property_id = db.PROPERTY.insert_one(property_data).inserted_id
+
         return {
             'success': True,
             'message': 'Property created successfully!',
