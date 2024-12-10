@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from myapp.views import get_dashboard, get_revenue_for_year, get_last_properties, get_filter_parameter, get_properties, \
-    get_property
+from myapp.views import get_property, get_dashboard, get_revenue_for_year, get_last_properties, get_filter_parameter, get_properties
 
 urlpatterns = [
     path('admin/', admin.site.urls),
