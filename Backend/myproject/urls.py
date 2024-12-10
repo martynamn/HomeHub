@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 
-from myapp.views import get_dashboard, get_revenue_for_year, get_last_properties, get_filter_parameter, get_properties
+from myapp.views import get_dashboard, get_revenue_for_year, get_last_properties, get_filter_parameter, get_properties, \
+    get_property
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -10,5 +11,6 @@ urlpatterns = [
     path('api/property/latest/<int:number>', get_last_properties),
     path('api/filter', get_filter_parameter),
     path('api/property', get_properties),
+    path('api/property/<str:property_id>', get_property),
 
 ]

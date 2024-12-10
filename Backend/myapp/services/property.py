@@ -3,7 +3,6 @@ from operator import itemgetter
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import JsonResponse
-
 from myapp.models import Property
 from myapp.serializer import PropertySerializer
 
@@ -51,6 +50,15 @@ def get_properties(request):
     serialized_properties = PropertySerializer(get_paginated_properties(properties, request), many=True).data
 
     return JsonResponse(serialized_properties, safe=False)
+
+
+def get_property(property_id: str):
+    property = Property.objects.get(_id = property_id)
+    if not property:
+        return JsonResponse({'error': 'No property found'}, status=404)
+
+    property_serialized = PropertySerializer(property).data
+    return JsonResponse(property_serialized, safe=False)
 
 
 def get_paginated_properties(properties, request):

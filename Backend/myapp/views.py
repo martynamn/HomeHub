@@ -34,6 +34,14 @@ def get_last_properties(request, number: int):
 def get_filter_parameter(request):
     return filter.get_filter_parameters(request)
 
+
 @require_GET
 def get_properties(request):
     return property.get_properties(request)
+
+
+@require_GET
+def get_property(request, property_id: str):
+    if id is None:
+        return JsonResponse({'error': 'The property id cannot be null'}, status=404)
+    return property.get_property(property_id)
