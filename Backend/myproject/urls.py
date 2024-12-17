@@ -23,9 +23,9 @@ urlpatterns = [
     path('api/property/<str:property_id>', get_property),
     path('api/property/user/<str:user_id>', get_properties_by_user),
     path('api/properties', create_property_view),
-    path('api/property/delete/<str:property_id>', delete_property_by_id),
-    path('api/property/sold/<str:property_id>', sold_property_by_id),
-    path('api/property/update/<str:property_id>', update_property),
+    path('api/properties/delete/<str:property_id>', delete_property_by_id),
+    path('api/properties/sold/<str:property_id>', sold_property_by_id),
+    path('api/properties/update/<str:property_id>', update_property),
 ]
 
 
