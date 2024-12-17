@@ -12,6 +12,7 @@ from myapp.serializer import PropertySerializer, ImageSerializer, AddressSeriali
 import base64
 import json
 import base64
+import uuid
 from datetime import datetime
 
 client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
@@ -178,20 +179,16 @@ def create_property(metadata, files):
             'postcode': data['address']['postcode'],
             'floor': data['address']['floor']
         }
-        address_id = db.ADDRESS.insert_one(address_data).inserted_id
 
         images = []
         for file in files:
             file_content = file.read()
             encoded_image = base64.b64encode(file_content).decode('utf-8')
-            image_data = {
-                'imageData': encoded_image,
-                'filename': file.name
-            }
-            image_id = db.IMAGE.insert_one(image_data).inserted_id
-            images.append(image_id)
+            images.append(encoded_image)
 
+        property_id = str(uuid.uuid4())
         property_data = {
+            '_id': property_id,
             'description': data.get('description'),
             'title': data.get('title'),
             'type': data.get('type'),
@@ -200,14 +197,16 @@ def create_property(metadata, files):
             'price': data.get('price'),
             'rooms': data.get('rooms'),
             'creationDate': datetime.now(),
-            'address': address_id,
-            'image': images[0] if images else None
+            'address': address_data,
+            'images': images
         }
-        property_id = db.PROPERTY.insert_one(property_data).inserted_id
+
+        db.PROPERTY.insert_one(property_data)
+
         return {
             'success': True,
             'message': 'Property created successfully!',
-            'property': str(property_id)
+            'property': property_id
         }
 
     except Exception as e:
