@@ -131,13 +131,25 @@ def create_property(metadata, files):
             'floor': data['address']['floor']
         }
 
-        images = []
+        image_ids = []
         for file in files:
             file_content = file.read()
             encoded_image = base64.b64encode(file_content).decode('utf-8')
-            images.append(encoded_image)
+
+            image_id = str(uuid.uuid4())
+
+            image_data = {
+                '_id': image_id,
+                'imageData': encoded_image,
+                'filename': file.name,
+                'uploadDate': datetime.now()
+            }
+
+            db.IMAGE.insert_one(image_data)
+            image_ids.append(image_id)
 
         property_id = str(uuid.uuid4())
+
         property_data = {
             '_id': property_id,
             'description': data.get('description'),
@@ -149,7 +161,7 @@ def create_property(metadata, files):
             'rooms': data.get('rooms'),
             'creationDate': datetime.now(),
             'address': address_data,
-            'images': images
+            'images': image_ids
         }
 
         db.PROPERTY.insert_one(property_data)
@@ -166,11 +178,10 @@ def create_property(metadata, files):
 
 def delete_property_by_id(property_id):
     try:
-        result = db.PROPERTY.delete_one({'_id': ObjectId(property_id)})
+        result = db.PROPERTY.delete_one({'_id': property_id})
 
         if result.deleted_count == 0:
             return {'error': 'Property not found'}
-
         return {'success': True, 'message': 'Property deleted successfully'}
 
     except Exception as e:
@@ -180,14 +191,19 @@ def delete_property_by_id(property_id):
 def sold_property_by_id(property_id):
     try:
         result = db.PROPERTY.find_one_and_update(
-            {'_id': ObjectId(property_id)},
-            {'$set': {'adType': 'sold'}}
+            {'_id': property_id},
+            {'$set': {'adType': 'sold'}},
+            return_document=True
         )
 
         if result is None:
-            return {'error': 'property not found'}
+            return {'error': 'Property not found'}
 
-        return {'detail': 'property updated'}
+        return {
+            'success': True,
+            'message': 'Property marked as sold successfully',
+            'property_id': result['_id']
+        }
 
     except Exception as e:
         return {'error': str(e)}
@@ -197,16 +213,14 @@ def update_property_by_id(property_id, metadata, files):
     try:
         property_data = create_property(metadata, files)
         result = db.PROPERTY.find_one_and_update(
-            {'_id': ObjectId(property_id)},
+            {'_id': property_id},
             {'$set': property_data},
             return_document=True
         )
-
         if result is None:
-            return {'error': 'property not found'}
-
-        return {'detail': 'property updated'}
-
+            return {'error': 'Property not found'}
+        return {'success': True, 'message': 'Property updated successfully'}
     except Exception as e:
         return {'error': str(e)}
+
 

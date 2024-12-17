@@ -78,7 +78,6 @@ def update_property(request, property_id):
     try:
         metadata = request.POST.get('metadata')
         files = request.FILES.getlist('files')
-
         if not metadata:
             return JsonResponse({'error': 'Metadata is required.'}, status=400)
         if not files:
