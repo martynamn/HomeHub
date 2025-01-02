@@ -1,22 +1,22 @@
+import base64
+import json
+import uuid
+from datetime import datetime
 from operator import itemgetter
 
+from bson.objectid import ObjectId
+from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import JsonResponse
 from pymongo import MongoClient
-from django.conf import settings
-from bson.objectid import ObjectId
 
-from myapp.models import Property, Image, Address
-from myapp.serializer import PropertySerializer, ImageSerializer, AddressSerializer
-import base64
-import json
-import base64
-import uuid
-from datetime import datetime
+from myapp.models import Property
+from myapp.serializer import PropertySerializer
 
 client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
 db = client[settings.DATABASES['default']['NAME']]
+
 
 def get_last_properties(number: int, user_id: str, ):
     if not number:
@@ -31,6 +31,7 @@ def get_last_properties(number: int, user_id: str, ):
     last_properties = properties_list[:number]
     return JsonResponse(last_properties, safe=False)
 
+
 def get_properties_by_user(user_id: str):
     properties = Property.objects.filter(userId=user_id)
     if not properties:
@@ -38,6 +39,7 @@ def get_properties_by_user(user_id: str):
 
     properties_list = PropertySerializer(properties, many=True).data
     return JsonResponse(properties_list, safe=False)
+
 
 def get_properties(request):
     filters = {
@@ -71,12 +73,13 @@ def get_properties(request):
 
 
 def get_property(property_id: str):
-    property = Property.objects.get(_id = property_id)
+    property = Property.objects.get(_id=property_id)
     if not property:
         return JsonResponse({'error': 'No property found'}, status=404)
 
     property_serialized = PropertySerializer(property).data
     return JsonResponse(property_serialized, safe=False)
+
 
 def get_paginated_properties(properties, request):
     limit = request.GET.get('limit')
@@ -222,5 +225,3 @@ def update_property_by_id(property_id, metadata, files):
         return {'success': True, 'message': 'Property updated successfully'}
     except Exception as e:
         return {'error': str(e)}
-
-

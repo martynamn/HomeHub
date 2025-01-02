@@ -1,13 +1,15 @@
+import email
+
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 from django.views.decorators.http import require_http_methods
-from rest_framework.exceptions import ValidationError
-import json
-from myapp.services import dashboard
+
+from myapp.services import dashboard, users
 from myapp.services import filter
 from myapp.services import property
+
 
 @require_GET
 def get_dashboard(request):
@@ -32,12 +34,14 @@ def get_last_properties(request, number: int):
         return JsonResponse({'error': 'userId is required'}, status=401)
     return property.get_last_properties(number, user_id)
 
+
 @require_GET
 def get_properties_by_user(request, user_id: str):
     response = property.get_properties_by_user(user_id)
     if response is None:
         return JsonResponse({'error': 'No properties found for this user'}, status=404)
     return response
+
 
 @csrf_exempt
 @require_POST
@@ -64,6 +68,7 @@ def delete_property_by_id(request, property_id):
         return JsonResponse(response, status=404)
     return JsonResponse(response, status=200)
 
+
 @require_http_methods(['PUT'])
 @csrf_exempt
 def sold_property_by_id(request, property_id):
@@ -71,6 +76,7 @@ def sold_property_by_id(request, property_id):
     if 'error' in response:
         return JsonResponse(response, status=404)
     return JsonResponse(response, status=200)
+
 
 @require_http_methods(['PUT'])
 @csrf_exempt
@@ -96,20 +102,82 @@ def update_property(request, property_id: str):
         return JsonResponse(response, status=200)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+
 @require_GET
 def get_properties_by_user(request, user_id: str):
     return property.get_properties_by_user(user_id)
+
 
 @require_GET
 def get_filter_parameter(request):
     return filter.get_filter_parameters(request)
 
+
 @require_GET
 def get_properties(request):
     return property.get_properties(request)
+
 
 @require_GET
 def get_property(request, property_id: str):
     if id is None:
         return JsonResponse({'error': 'The property id cannot be null'}, status=404)
     return property.get_property(property_id)
+
+
+@csrf_exempt
+@require_POST
+def create_user_view(request):
+    metadata = request.POST.get('metadata')
+    files = request.FILES.getlist('files')
+    if not metadata:
+        return JsonResponse({'error': 'Metadata is required.'}, status=400)
+    if not files:
+        return JsonResponse({'error': 'Image files are required.'}, status=400)
+
+    return users.create_user(metadata, files)
+
+
+@require_GET
+def get_users(request):
+    return users.get_users()
+
+
+@require_GET
+def get_user(request, user_id: str):
+    if user_id is None:
+        return JsonResponse({'error': 'The user id cannot be null'}, status=404)
+    return users.get_user(user_id)
+
+
+@require_http_methods(['POST'])
+@csrf_exempt
+def update_user(request, user_id: str):
+    metadata = request.POST.get('metadata')
+    files = request.FILES.getlist('files')
+
+    if not metadata:
+        return JsonResponse({'error': 'Metadata is required.'}, status=400)
+    if not files:
+        return JsonResponse({'error': 'Image files are required.'}, status=400)
+    if user_id is None:
+        return JsonResponse({'error': 'The user id cannot be null'}, status=404)
+
+    return users.update_user(metadata, files, user_id)
+
+
+@require_http_methods(['DELETE'])
+@csrf_exempt
+def delete_user(request, user_id):
+    if user_id is None:
+        return JsonResponse({'error': 'The user id cannot be null'}, status=404)
+    return users.delete_user(user_id)
+
+
+@require_http_methods(['PUT'])
+@csrf_exempt
+def set_subscription(request, user_id: str):
+    if user_id is None:
+        return JsonResponse({'error': 'The user id cannot be null'}, status=404)
+    return users.set_subscription(user_id)
