@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Property, Image, Address
+from .models import Property, Image, Address, User
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -21,6 +21,21 @@ class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Property
+        fields = '__all__'
+
+    def get_images(self, obj):
+        image_ids = obj.images
+
+        images = Image.objects.filter(_id__in=image_ids)
+
+        return ImageSerializer(images, many=True).data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
         fields = '__all__'
 
     def get_images(self, obj):

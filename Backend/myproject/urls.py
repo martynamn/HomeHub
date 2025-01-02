@@ -11,7 +11,8 @@ from myapp.views import (get_properties_by_user,
                          update_property,
                          get_dashboard,
                          get_revenue_for_year,
-                         get_last_properties)
+                         get_last_properties, create_user_view, get_users, get_user, set_subscription, update_user,
+                         delete_user)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +27,10 @@ urlpatterns = [
     path('api/properties/delete/<str:property_id>', delete_property_by_id),
     path('api/properties/sold/<str:property_id>', sold_property_by_id),
     path('api/properties/update/<str:property_id>', update_property),
+    path('api/user', get_users),
+    path('api/user/<str:user_id>', get_user),
+    path('api/users', create_user_view),
+    path('api/users/update/<str:user_id>', update_user),
+    path('api/users/delete/<str:user_id>', delete_user),
+    path('api/users/subscription/<str:user_id>', set_subscription)
 ]
-
-
-
