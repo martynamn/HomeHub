@@ -12,12 +12,15 @@ from myapp.serializer import PropertySerializer, ImageSerializer, AddressSeriali
 import base64
 import json
 import base64
+import uuid
 from datetime import datetime
 
 client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
 db = client[settings.DATABASES['default']['NAME']]
 
 def get_last_properties(number: int, user_id: str, ):
+    if not number:
+        number = 3
     properties = Property.objects.filter(Q(adType__in=['sale', 'rent']), userId=user_id)
     if not properties:
         return JsonResponse({'error': 'No properties found for this user'}, status=404)
@@ -75,57 +78,6 @@ def get_property(property_id: str):
     property_serialized = PropertySerializer(property).data
     return JsonResponse(property_serialized, safe=False)
 
-
-def get_paginated_properties(properties, request):
-    limit = request.GET.get('limit')
-    index = request.GET.get('index')
-
-    limit = int(limit) if limit is not None else 10
-    index = int(index) if index is not None else 1
-
-    paginator = Paginator(properties, limit)
-
-    try:
-        properties_page = paginator.page(index)
-    except PageNotAnInteger:
-        properties_page = paginator.page(1)
-    except EmptyPage:
-        properties_page = paginator.page(paginator.num_pages)
-
-    return properties_page
-
-
-def get_properties(request):
-    filters = {
-        "userId": request.GET.get('userId', None),
-        "type": request.GET.get("type", None),
-        "adType": request.GET.get("ad_type", None),
-        "address__country": request.GET.get("country", None),
-        "address__city": request.GET.get("city", None),
-        "address__floor": int(request.GET.get("floor", )) if request.GET.get("floor", None) is not None else None,
-        "rooms": int(request.GET.get("rooms", None)) if request.GET.get("rooms", None) is not None else None,
-        "price__gte": int(request.GET.get("min_price", None)) if request.GET.get("min_price",
-                                                                                 None) is not None else None,
-        "price__lte": int(request.GET.get("max_price", None)) if request.GET.get("max_price",
-                                                                                 None) is not None else None,
-        "area__gte": int(request.GET.get("min_area", None)) if request.GET.get("min_area", None) is not None else None,
-        "area__lte": int(request.GET.get("max_area", None)) if request.GET.get("max_area", None) is not None else None,
-    }
-
-    filters = {filter: value for filter, value in filters.items() if value is not None}
-
-    q_filter = Q()
-    for field, value in filters.items():
-        if value is not None:
-            q_filter &= Q(**{field: value})
-    q_filter &= ~Q(adType="sold")
-
-    properties = Property.objects.filter(q_filter)
-    serialized_properties = PropertySerializer(get_paginated_properties(properties, request), many=True).data
-
-    return JsonResponse(serialized_properties, safe=False)
-
-
 def get_paginated_properties(properties, request):
     limit = request.GET.get('limit')
     index = request.GET.get('index')
@@ -178,20 +130,28 @@ def create_property(metadata, files):
             'postcode': data['address']['postcode'],
             'floor': data['address']['floor']
         }
-        address_id = db.ADDRESS.insert_one(address_data).inserted_id
 
-        images = []
+        image_ids = []
         for file in files:
             file_content = file.read()
             encoded_image = base64.b64encode(file_content).decode('utf-8')
+
+            image_id = str(uuid.uuid4())
+
             image_data = {
+                '_id': image_id,
                 'imageData': encoded_image,
-                'filename': file.name
+                'filename': file.name,
+                'uploadDate': datetime.now()
             }
-            image_id = db.IMAGE.insert_one(image_data).inserted_id
-            images.append(image_id)
+
+            db.IMAGE.insert_one(image_data)
+            image_ids.append(image_id)
+
+        property_id = str(uuid.uuid4())
 
         property_data = {
+            '_id': property_id,
             'description': data.get('description'),
             'title': data.get('title'),
             'type': data.get('type'),
@@ -200,14 +160,16 @@ def create_property(metadata, files):
             'price': data.get('price'),
             'rooms': data.get('rooms'),
             'creationDate': datetime.now(),
-            'address': address_id,
-            'image': images[0] if images else None
+            'address': address_data,
+            'images': image_ids
         }
-        property_id = db.PROPERTY.insert_one(property_data).inserted_id
+
+        db.PROPERTY.insert_one(property_data)
+
         return {
             'success': True,
             'message': 'Property created successfully!',
-            'property': str(property_id)
+            'property': property_id
         }
 
     except Exception as e:
@@ -216,11 +178,10 @@ def create_property(metadata, files):
 
 def delete_property_by_id(property_id):
     try:
-        result = db.PROPERTY.delete_one({'_id': ObjectId(property_id)})
+        result = db.PROPERTY.delete_one({'_id': property_id})
 
         if result.deleted_count == 0:
             return {'error': 'Property not found'}
-
         return {'success': True, 'message': 'Property deleted successfully'}
 
     except Exception as e:
@@ -230,14 +191,19 @@ def delete_property_by_id(property_id):
 def sold_property_by_id(property_id):
     try:
         result = db.PROPERTY.find_one_and_update(
-            {'_id': ObjectId(property_id)},
-            {'$set': {'adType': 'sold'}}
+            {'_id': property_id},
+            {'$set': {'adType': 'sold'}},
+            return_document=True
         )
 
         if result is None:
-            return {'error': 'property not found'}
+            return {'error': 'Property not found'}
 
-        return {'detail': 'property updated'}
+        return {
+            'success': True,
+            'message': 'Property marked as sold successfully',
+            'property_id': result['_id']
+        }
 
     except Exception as e:
         return {'error': str(e)}
@@ -247,16 +213,14 @@ def update_property_by_id(property_id, metadata, files):
     try:
         property_data = create_property(metadata, files)
         result = db.PROPERTY.find_one_and_update(
-            {'_id': ObjectId(property_id)},
+            {'_id': property_id},
             {'$set': property_data},
             return_document=True
         )
-
         if result is None:
-            return {'error': 'property not found'}
-
-        return {'detail': 'property updated'}
-
+            return {'error': 'Property not found'}
+        return {'success': True, 'message': 'Property updated successfully'}
     except Exception as e:
         return {'error': str(e)}
+
 
