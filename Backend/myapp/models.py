@@ -42,6 +42,7 @@ class Property(models.Model):
     creationDate = models.DateTimeField()
     address = models.EmbeddedField(model_container=Address)
     images = models.JSONField(default=list, blank=True)
+    telephoneNumber = models.CharField(max_length=13)
 
     class Meta:
         db_table = 'PROPERTY'
@@ -57,14 +58,14 @@ class User(models.Model):
     _id = models.ObjectIdField()
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
-    phone = models.CharField(max_length=11)
+    telephoneNumber = models.CharField(max_length=11)
     gender = models.CharField(max_length=6, choices=gender)
     email = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     agencyName = models.CharField(max_length=255)
-    AgentLicenseId = models.CharField(max_length=255)
+    agentLicenseId = models.CharField(max_length=255)
     premium = models.BooleanField(default=False)
     images = models.JSONField(default=list, blank=True)
 

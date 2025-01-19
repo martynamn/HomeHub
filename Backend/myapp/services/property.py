@@ -164,7 +164,8 @@ def create_property(metadata, files):
             'rooms': data.get('rooms'),
             'creationDate': datetime.now(),
             'address': address_data,
-            'images': image_ids
+            'images': image_ids,
+            'telephoneNumber': data.get('telephoneNumber')
         }
 
         db.PROPERTY.insert_one(property_data)
