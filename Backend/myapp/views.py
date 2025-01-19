@@ -1,5 +1,3 @@
-import email
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
@@ -78,30 +76,21 @@ def sold_property_by_id(request, property_id):
     return JsonResponse(response, status=200)
 
 
-@require_http_methods(['PUT'])
+@require_http_methods(['POST'])
 @csrf_exempt
 def update_property(request, property_id: str):
-    try:
-        message = email.message_from_bytes(request.body)
-        message_lines = message.as_string().split('\n')
-        metadata = None
-        for i in range(len(message_lines) - 1):
-            if 'metadata' in message_lines[i]:
-                metadata = message_lines[i + 2]
-            if 'files' in message_lines[i]:
-                files = message_lines[i]
+    metadata = request.POST.get('metadata')
+    files = request.FILES.getlist('files')
 
-        if not metadata:
-            return JsonResponse({'error': 'Metadata is required.'}, status=400)
-        if not files:
-            return JsonResponse({'error': 'Image files are required.'}, status=400)
+    if not metadata:
+        return JsonResponse({'error': 'Metadata is required.'}, status=400)
+    if not files:
+        return JsonResponse({'error': 'Image files are required.'}, status=400)
 
-        response = property.update_property_by_id(property_id, metadata, files)
-        if 'error' in response:
-            return JsonResponse(response, status=404)
-        return JsonResponse(response, status=200)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+    response = property.update_property_by_id(property_id, metadata, files)
+    if 'error' in response:
+        return JsonResponse(response, status=404)
+    return JsonResponse(response, status=200)
 
 
 @require_GET

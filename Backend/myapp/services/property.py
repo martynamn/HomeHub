@@ -164,7 +164,8 @@ def create_property(metadata, files):
             'rooms': data.get('rooms'),
             'creationDate': datetime.now(),
             'address': address_data,
-            'images': image_ids
+            'images': image_ids,
+            'telephoneNumber': data.get('telephoneNumber')
         }
 
         db.PROPERTY.insert_one(property_data)
@@ -177,6 +178,51 @@ def create_property(metadata, files):
 
     except Exception as e:
         return {'error': str(e)}
+
+
+def create_property_object(metadata, files):
+    data = json.loads(metadata)
+
+    address_data = {
+        'country': data['address']['country'],
+        'city': data['address']['city'],
+        'postcode': data['address']['postcode'],
+        'floor': data['address']['floor']
+    }
+
+    image_ids = []
+    for file in files:
+        file_content = file.read()
+        encoded_image = base64.b64encode(file_content).decode('utf-8')
+
+        image_id = str(uuid.uuid4())
+
+        image_data = {
+            '_id': image_id,
+            'imageData': encoded_image,
+            'filename': file.name,
+            'uploadDate': datetime.now()
+        }
+
+        db.IMAGE.insert_one(image_data)
+        image_ids.append(image_id)
+
+
+    property_data = {
+        'description': data.get('description'),
+        'title': data.get('title'),
+        'type': data.get('type'),
+        'adType': data.get('adType'),
+        'userId': data.get('userId'),
+        'price': data.get('price'),
+        'rooms': data.get('rooms'),
+        'creationDate': datetime.now(),
+        'address': address_data,
+        'images': image_ids,
+        'telephoneNumber': data.get('telephoneNumber')
+    }
+
+    return property_data
 
 
 def delete_property_by_id(property_id):
@@ -214,7 +260,7 @@ def sold_property_by_id(property_id):
 
 def update_property_by_id(property_id, metadata, files):
     try:
-        property_data = create_property(metadata, files)
+        property_data = create_property_object(metadata, files)
         result = db.PROPERTY.find_one_and_update(
             {'_id': property_id},
             {'$set': property_data},

@@ -114,14 +114,14 @@ def create_user_record(metadata, files):
         '_id': data.get('userId'),
         'firstName': data.get('firstName'),
         'lastName': data.get('lastName'),
-        'phone': data.get('phone'),
+        'telephoneNumber': data.get('telephoneNumber'),
         'gender': data.get('gender'),
         'email': data.get('email'),
         'country': data.get('country'),
         'city': data.get('city'),
         'description': data.get('description'),
         'agencyName': data.get('agencyName'),
-        'AgentLicenseId': data.get('AgentLicenseId'),
+        'agentLicenseId': data.get('agentLicenseId'),
         'premium': data.get('premium'),
         'images': image_ids
     }
